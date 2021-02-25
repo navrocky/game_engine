@@ -1,4 +1,10 @@
-import { GameBoardItem } from "./core";
+import {
+  GameBoardEngine,
+  GameBoardItem,
+  isPointsEquals,
+  Point,
+  Rect,
+} from "../core/core";
 
 class Checker implements GameBoardItem {
   constructor(
@@ -14,11 +20,13 @@ class Checker implements GameBoardItem {
   }
 
   getBounds(): Rect {
+    const x = this.position.x - this.size / 2;
+    const y = this.position.y - this.size / 2;
     return {
-      x: this.position.x - this.size / 2,
-      y: this.position.y - this.size / 2,
-      width: this.size,
-      height: this.size,
+      left: x,
+      top: y,
+      right: x + this.size,
+      bottom: y + this.size,
     };
   }
 

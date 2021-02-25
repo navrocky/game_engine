@@ -6,13 +6,16 @@ import {
   Rect,
   uniteRects,
 } from "./core";
+import { Size } from "./size";
 
-class GameBoardEngineImpl implements GameBoardEngine {
+export class GameBoardEngineImpl implements GameBoardEngine {
   private animations: Animation[] = [];
   private items: GameBoardItem[] = [];
   private redrawRegion: Rect | undefined = undefined;
 
   constructor(private canvas: CanvasRenderingContext2D) {}
+  
+  size: Size;
 
   requestRedraw(region: Rect): void {
     if (this.redrawRegion) {
@@ -35,7 +38,7 @@ class GameBoardEngineImpl implements GameBoardEngine {
     this.animations.push(animation);
   }
 
-  onEachFrame(): void {
+  processFrame(): void {
     if (this.animations.length > 0) {
       const now = Date.now();
       this.animations.forEach((a) => a.animate(now));
@@ -43,13 +46,19 @@ class GameBoardEngineImpl implements GameBoardEngine {
 
     if (this.redrawRegion) {
       this.drawBoard(this.redrawRegion);
+      this.redrawRegion = undefined;
     }
   }
 
   private drawBoard(region: Rect) {
     this.items.forEach((item) => {
       if (isIntersects(item.getBounds(), region)) {
-        item.render(this.canvas);
+        this.canvas.save();
+        try {
+          item.render(this.canvas);
+        } finally {
+          this.canvas.restore();
+        }
       }
     });
   }

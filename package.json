@@ -1,0 +1,26 @@
+{
+  "name": "game_engine",
+  "version": "1.0.0",
+  "description": "Sample game engine",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/navrocky/game_engine.git"
+  },
+  "keywords": [],
+  "author": "Vladislav Navrocky",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/navrocky/game_engine/issues"
+  },
+  "homepage": "https://github.com/navrocky/game_engine#readme",
+  "dependencies": {
+    "rxjs": "^6.6.3"
+  },
+  "devDependencies": {
+    "typescript": "^4.2.2"
+  }
+}
