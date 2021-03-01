@@ -1,4 +1,4 @@
-import { Subject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { Rect } from "./rect";
 import { Size } from "./size";
 
@@ -16,7 +16,7 @@ export interface GameBoardItem {
 }
 
 export interface GameBoardEngine {
-  size: Size;
+  readonly size: BehaviorSubject<Size>;
   startAnimation(animation: Animation): void;
   processFrame(): void;
   addItem(item: GameBoardItem): void;

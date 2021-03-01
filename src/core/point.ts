@@ -1,8 +1,9 @@
-export interface Point {
-  x: number;
-  y: number;
-}
+export class Point {
+  static readonly EMPTY = new Point(0, 0);
 
-export function isPointsEquals(p1: Point, p2: Point): boolean {
-  return p1.x === p2.x && p1.y === p2.y;
+  constructor(public readonly x: number, public readonly y: number) {}
+
+  isEquals(other: Point): boolean {
+    return this.x === other.x && this.y === other.y;
+  }
 }

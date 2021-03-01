@@ -2,8 +2,8 @@ import { Subject } from "rxjs";
 import { Animation, EasingFunction } from "./core";
 
 export abstract class TimedAnimation implements Animation {
-  private startedAt: number;
-  onFinish: Subject<void>;
+  private startedAt?: number;
+  onFinish = new Subject<void>();
 
   constructor(private duration: number, private easing: EasingFunction) {}
 
@@ -12,10 +12,11 @@ export abstract class TimedAnimation implements Animation {
   }
 
   animate(timestamp: number): void {
+    if (!this.startedAt) return;
     const v = this.easing((timestamp - this.startedAt) / this.duration);
     this.animateWithPercent(v);
     if (timestamp >= this.startedAt + this.duration) {
-      this.onFinish.
+      this.onFinish.next();
     }
   }
 

@@ -1,27 +1,51 @@
-import {
-  GameBoardEngine,
-  GameBoardItem,
-  Animation,
-  isIntersects,
-  Rect,
-  uniteRects,
-} from "./core";
+import { BehaviorSubject } from "rxjs";
+import { Animation, GameBoardEngine, GameBoardItem } from "./core";
+import { Rect } from "./rect";
 import { Size } from "./size";
 
 export class GameBoardEngineImpl implements GameBoardEngine {
   private animations: Animation[] = [];
   private items: GameBoardItem[] = [];
   private redrawRegion: Rect | undefined = undefined;
+  private context: CanvasRenderingContext2D;
+  size = new BehaviorSubject<Size>(Size.EMPTY);
 
-  constructor(private canvas: CanvasRenderingContext2D) {}
-  
-  size: Size;
+  constructor(canvas: HTMLCanvasElement) {
+    const resizeObserver = new ResizeObserver(
+      (entries: ResizeObserverEntry[]) => {
+        entries.forEach((e) => {
+          if (e.target === canvas) {
+            const boxSize = e.contentBoxSize[0] ? e.contentBoxSize[0] : (e.contentBoxSize as any) as ResizeObserverSize;
+            const size = new Size(boxSize.inlineSize, boxSize.blockSize);
+            this.size.next(size);
+            console.log("Canvas size changed:", size);
+            this.requestRedraw();
+          }
+        });
+      }
+    );
+    resizeObserver.observe(canvas);
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Cannot get canvas context");
+    this.context = context;
+  }
 
-  requestRedraw(region: Rect): void {
+  private getNow(): number {
+    return Date.now();
+  }
+
+  requestRedraw(region?: Rect): void {
+    const r = region
+      ? region
+      : (() => {
+          const size = this.size.getValue();
+          return new Rect(0, 0, size.width, size.height);
+        })();
+
     if (this.redrawRegion) {
-      this.redrawRegion = uniteRects(this.redrawRegion, region);
+      this.redrawRegion = this.redrawRegion.uniteWith(r);
     } else {
-      this.redrawRegion = region;
+      this.redrawRegion = r;
     }
   }
 
@@ -36,11 +60,12 @@ export class GameBoardEngineImpl implements GameBoardEngine {
       subscription.unsubscribe();
     });
     this.animations.push(animation);
+    animation.start(this.getNow());
   }
 
   processFrame(): void {
     if (this.animations.length > 0) {
-      const now = Date.now();
+      const now = this.getNow();
       this.animations.forEach((a) => a.animate(now));
     }
 
@@ -52,14 +77,15 @@ export class GameBoardEngineImpl implements GameBoardEngine {
 
   private drawBoard(region: Rect) {
     this.items.forEach((item) => {
-      if (isIntersects(item.getBounds(), region)) {
-        this.canvas.save();
+      // FIXME intersection is not working
+      // if (region.isIntersects(item.getBounds())) {
+        this.context.save();
         try {
-          item.render(this.canvas);
+          item.render(this.context);
         } finally {
-          this.canvas.restore();
+          this.context.restore();
         }
-      }
+      // }
     });
   }
 
