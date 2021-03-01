@@ -11,7 +11,6 @@ export class BackgroundItem implements GameBoardItem {
 
   render(canvas: CanvasRenderingContext2D): void {
     const size = this.gameBoard.size.getValue();
-    console.log("Draw background", this.color, size)
     canvas.fillStyle = this.color;
     canvas.fillRect(0, 0, size.width, size.height);
   }
