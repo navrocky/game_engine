@@ -1,5 +1,4 @@
 export class Rect {
-
   static readonly EMPTY = new Rect(0, 0, 0, 0);
 
   constructor(
@@ -8,6 +7,14 @@ export class Rect {
     public right: number,
     public bottom: number
   ) {}
+
+  get width() {
+    return this.right - this.left;
+  }
+
+  get height() {
+    return this.bottom - this.top;
+  }
 
   isEmpty(): boolean {
     return this.left === this.right && this.top === this.bottom;
@@ -38,6 +45,6 @@ export class Rect {
   }
 
   isIntersects(other: Rect): boolean {
-    return this.intersectWith(other).isEmpty();
+    return !this.intersectWith(other).isEmpty();
   }
 }

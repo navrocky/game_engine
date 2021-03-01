@@ -1,20 +1,20 @@
-import { EasingFunction } from "./core";
-import { TimedAnimation } from "./timedAnimation";
+import { IntervalAnimation, IntervalAnimationProps } from "./intervalAnimation";
 
-export class NumberAnimation extends TimedAnimation {
-  constructor(
-    private startValue: number,
-    private endValue: number,
-    duration: number,
-    easing: EasingFunction,
-    private setter: (v: number) => void
-  ) {
-    super(duration, easing);
+interface NumberAnimationProps extends IntervalAnimationProps {
+  startValue: number;
+  endValue: number;
+  setter: (v: number) => void;
+}
+
+export class NumberAnimation extends IntervalAnimation {
+  constructor(props: NumberAnimationProps) {
+    super(props);
   }
 
-  animateWithPercent(percent: number): void {
-    const delta = this.endValue - this.startValue;
-    const current = this.startValue + delta * percent;
-    this.setter(current);
+  update(percent: number): void {
+    const props = this.props as NumberAnimationProps;
+    const delta = props.endValue - props.startValue;
+    const current = props.startValue + delta * percent;
+    props.setter(current);
   }
 }

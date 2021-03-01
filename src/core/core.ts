@@ -7,7 +7,7 @@ export type EasingFunction = (v: number) => number;
 export interface Animation {
   onFinish: Subject<void>;
   start(timestamp: number): void;
-  animate(timestamp: number): void;
+  step(timestamp: number): void;
 }
 
 export interface GameBoardItem {
@@ -18,7 +18,6 @@ export interface GameBoardItem {
 export interface GameBoardEngine {
   readonly size: BehaviorSubject<Size>;
   startAnimation(animation: Animation): void;
-  processFrame(): void;
   addItem(item: GameBoardItem): void;
   removeItem(item: GameBoardItem): void;
   requestRedraw(region: Rect): void;
